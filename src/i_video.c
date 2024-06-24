@@ -106,11 +106,6 @@ void I_FinishUpdate(void) {
 	SDL_UpdateWindowSurface(sdl_win);
 };
 
-// Wait for vertical retrace or pause a bit.
-//void I_WaitVBL(int count) {
-//	SDL_Delay((Uint32)((float)count * (float)0.014));
-//};
-
 void I_ReadScreen(byte* scr) {
 	memcpy(scr, screens[0], SCREENWIDTH * SCREENHEIGHT);
 };
