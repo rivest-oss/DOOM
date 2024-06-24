@@ -1018,7 +1018,10 @@ void D_DoomMain (void)
     Z_Init ();
 
     printf ("W_Init: Init WADfiles.\n");
-    W_InitMultipleFiles (wadfiles);
+
+	// [TODO] Exit graciously.
+    if(W_InitMultipleFiles (wadfiles) < 0)
+		return 1;
     
 
     // Check for -file in shareware

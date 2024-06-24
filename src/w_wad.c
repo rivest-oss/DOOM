@@ -288,10 +288,12 @@ void W_Reload (void)
 // Lump names can appear multiple times.
 // The name searcher looks backwards, so a later file
 //  does override all earlier ones.
+// Returns non-zero if it fails.
 //
-void W_InitMultipleFiles (char** filenames)
+int W_InitMultipleFiles (char** filenames)
 {	
-    int		size;
+    int size;
+    int code = 0;
     
     // open all the files, load headers, and count lumps
     numlumps = 0;
@@ -302,17 +304,23 @@ void W_InitMultipleFiles (char** filenames)
     for ( ; *filenames ; filenames++)
 	W_AddFile (*filenames);
 
-    if (!numlumps)
-	I_Error ("W_InitFiles: no files found");
+    if (!numlumps) {
+        code = -1;
+    	I_Error ("W_InitFiles: no files found");
+    }
     
     // set up caching
     size = numlumps * sizeof(*lumpcache);
     lumpcache = malloc (size);
     
-    if (!lumpcache)
-	I_Error ("Couldn't allocate lumpcache");
+    if (!lumpcache) {
+        code = -1;
+    	I_Error ("Couldn't allocate lumpcache");
+    }
 
     memset (lumpcache,0, size);
+
+    return code;
 }
 
 
@@ -321,14 +329,15 @@ void W_InitMultipleFiles (char** filenames)
 //
 // W_InitFile
 // Just initialize from a single file.
+// Returns non-zero if it fails.
 //
-void W_InitFile (char* filename)
+int W_InitFile (char* filename)
 {
     char*	names[2];
 
     names[0] = filename;
     names[1] = NULL;
-    W_InitMultipleFiles (names);
+    return W_InitMultipleFiles (names);
 }
 
 
