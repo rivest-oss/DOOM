@@ -127,11 +127,5 @@ void I_StartTic(void) {
 	if(!sdl_win)
 		return;
 
-	//SDL_Event ev;
-	//while(SDL_PollEvent(&ev));
-
 	SDL_WarpMouseInWindow(sdl_win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 };
-
-// Pa' actualizah,
-// SDL_UpdateWindowSurface(sdl_win);
