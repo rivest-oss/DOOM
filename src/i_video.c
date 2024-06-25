@@ -32,8 +32,11 @@
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_scancode.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_video.h>
+
+#include <stdio.h>
 
 SDL_Window *sdl_win = NULL;
 SDL_Surface *sdl_sur = NULL;
@@ -114,13 +117,126 @@ void I_StartFrame(void) {
 	// er?
 };
 
-void I_GetEvent(void) {
-	// [TODO]
+int get_sdl_keycode(SDL_Event *sdl_ev) {
+	int code = -1;
+
+	switch(sdl_ev->key.keysym.scancode) {
+		case SDL_SCANCODE_UP: code = KEY_UPARROW; break;
+		case SDL_SCANCODE_DOWN: code = KEY_DOWNARROW; break;
+		case SDL_SCANCODE_LEFT: code = KEY_LEFTARROW; break;
+		case SDL_SCANCODE_RIGHT: code = KEY_RIGHTARROW; break;
+		case SDL_SCANCODE_ESCAPE: code = KEY_ESCAPE; break;
+		case SDL_SCANCODE_RETURN: code = KEY_ENTER; break;
+		case SDL_SCANCODE_TAB: code = KEY_TAB; break;
+		case SDL_SCANCODE_F1: code = KEY_F1; break;
+		case SDL_SCANCODE_F2: code = KEY_F2; break;
+		case SDL_SCANCODE_F3: code = KEY_F3; break;
+		case SDL_SCANCODE_F4: code = KEY_F4; break;
+		case SDL_SCANCODE_F5: code = KEY_F5; break;
+		case SDL_SCANCODE_F6: code = KEY_F6; break;
+		case SDL_SCANCODE_F7: code = KEY_F7; break;
+		case SDL_SCANCODE_F8: code = KEY_F8; break;
+		case SDL_SCANCODE_F9: code = KEY_F9; break;
+		case SDL_SCANCODE_F10: code = KEY_F10; break;
+		case SDL_SCANCODE_F11: code = KEY_F11; break;
+		case SDL_SCANCODE_F12: code = KEY_F12; break;
+		case SDL_SCANCODE_DELETE:
+		case SDL_SCANCODE_BACKSPACE:
+			code = KEY_BACKSPACE; break;
+		case SDL_SCANCODE_PAUSE: code = KEY_PAUSE; break;
+		case SDL_SCANCODE_KP_ENTER:
+		case SDL_SCANCODE_EQUALS:
+			code = KEY_EQUALS; break;
+		case SDL_SCANCODE_KP_MINUS:
+		case SDL_SCANCODE_MINUS:
+			code = KEY_MINUS; break;
+		case SDL_SCANCODE_LSHIFT:
+		case SDL_SCANCODE_RSHIFT:
+			code = KEY_RSHIFT; break;
+		case SDL_SCANCODE_LCTRL:
+		case SDL_SCANCODE_RCTRL:
+			code = KEY_RCTRL; break;
+		case SDL_SCANCODE_LALT:
+		case SDL_SCANCODE_RALT:
+			code = KEY_RALT; break;
+
+		default: {
+			if((sdl_ev->key.keysym.scancode >= 4) & (sdl_ev->key.keysym.scancode <= 29)) {
+				code = sdl_ev->key.keysym.scancode + 0x5d;
+			} else if(sdl_ev->key.keysym.scancode == 44) {
+				code = 0x20;
+			}
+			
+			break;
+		};
+	};
+
+	return code;
+};
+
+int sdl_mouse_x = 0, sdl_mouse_y = 0;
+
+void I_GetEvents(void) {
+	event_t doom_ev;
+	SDL_Event sdl_ev;
+
+	while(SDL_PollEvent(&sdl_ev) != 0) {
+		switch(sdl_ev.type) {
+			case SDL_KEYDOWN: {
+				doom_ev.type = ev_keydown;
+				doom_ev.data1 = get_sdl_keycode(&sdl_ev);
+				D_PostEvent(&doom_ev);
+				break;
+			};
+
+			case SDL_KEYUP: {
+				doom_ev.type = ev_keyup;
+				doom_ev.data1 = get_sdl_keycode(&sdl_ev);
+				D_PostEvent(&doom_ev);
+				break;
+			};
+
+			case SDL_MOUSEBUTTONDOWN: {
+				doom_ev.type = ev_mouse;
+				doom_ev.data1 = (sdl_ev.button.button == SDL_BUTTON_LEFT);
+				// [TODO] Improve this ^
+				doom_ev.data2 = doom_ev.data3 = 0;
+				D_PostEvent(&doom_ev);
+				break;
+			};
+
+			case SDL_MOUSEBUTTONUP: {
+				doom_ev.type = ev_mouse;
+				doom_ev.data1 = (sdl_ev.button.button != SDL_BUTTON_LEFT);
+				// [TODO] Improve this ^
+				doom_ev.data2 = doom_ev.data3 = 0;
+				D_PostEvent(&doom_ev);
+				break;
+			};
+
+			case SDL_MOUSEMOTION: {
+				Uint32 m_state = SDL_GetRelativeMouseState(&sdl_mouse_x, &sdl_mouse_y);
+			
+				doom_ev.type = ev_mouse;
+				doom_ev.data1 = 0;
+				doom_ev.data2 = ((sdl_mouse_x) << 2);
+				doom_ev.data3 = ((sdl_mouse_y) << 2);
+				// [TODO] Improve this ^
+
+				D_PostEvent(&doom_ev);
+				break;
+			};
+
+			default: break;
+		};
+	};
 };
 
 void I_StartTic(void) {
 	if(!sdl_win)
 		return;
 
-	SDL_WarpMouseInWindow(sdl_win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+	I_GetEvents();
+
+	SDL_WarpMouseInWindow(sdl_win, SCREENWIDTH >> 1, SCREENHEIGHT >> 1);
 };
