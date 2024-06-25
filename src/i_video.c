@@ -264,5 +264,5 @@ void I_StartTic(void) {
 
 	I_GetEvents();
 
-	SDL_WarpMouseInWindow(sdl_win, SCREENWIDTH >> 1, SCREENHEIGHT >> 1);
+	SDL_WarpMouseInWindow(sdl_win, (SCREENWIDTH << WIN_SHIFT_FACTOR >> 1), (SCREENHEIGHT << WIN_SHIFT_FACTOR) >> 1);
 };
