@@ -1,6 +1,6 @@
 CC = gcc								# gcc or g++
 
-CFLAGS = -g -Wall -DNORMALUNIX -DLINUX # -DUSEASM 
+CFLAGS = -g -Wall -DNORMALUNIX -DLINUX # -DUSEASM
 LDFLAGS = 
 LIBS = -lm `sdl2-config --cflags --libs`
 
@@ -18,7 +18,7 @@ OBJS =	\
 		$(O)/i_net.o		\
 		$(O)/tables.o		\
 		$(O)/f_finale.o		\
-		$(O)/f_wipe.o 		\
+		$(O)/f_wipe.o		\
 		$(O)/d_main.o		\
 		$(O)/d_net.o		\
 		$(O)/d_items.o		\
