@@ -38,10 +38,15 @@
 
 #include <stdio.h>
 
+const unsigned int WIN_SHIFT_FACTOR = 2;
+
+const unsigned int WIN_WIDTH = (SCREENWIDTH << WIN_SHIFT_FACTOR);
+const unsigned int WIN_HEIGHT = (SCREENHEIGHT << WIN_SHIFT_FACTOR);
+
 SDL_Window *sdl_win = NULL;
 SDL_Surface *sdl_sur = NULL;
 SDL_Surface *sdl_pal_sur = NULL;
-SDL_Color screen_pal[256];
+SDL_Color sdl_pal_colors[256];
 
 // Called by DoomMain,
 // determines the hardware configuration
@@ -52,7 +57,7 @@ void I_InitGraphics(void) {
 		return;
 	}
 	
-	sdl_win = SDL_CreateWindow("LinuxDOOM", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREENWIDTH, SCREENHEIGHT, SDL_WINDOW_SHOWN);
+	sdl_win = SDL_CreateWindow("LinuxDOOM", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIN_WIDTH, WIN_HEIGHT, SDL_WINDOW_SHOWN);
 
 	if(!sdl_win) {
 		I_Error("Couldn't create a SDL window: %s", SDL_GetError());
@@ -76,7 +81,7 @@ void I_InitGraphics(void) {
 	SDL_UpdateWindowSurface(sdl_win);
 
 	for(Uint16 i = 0; i < 256; i++)
-		screen_pal[i].a = SDL_ALPHA_OPAQUE;
+		sdl_pal_colors[i].a = SDL_ALPHA_OPAQUE;
 };
 
 void I_ShutdownGraphics(void) {
@@ -88,12 +93,12 @@ void I_ShutdownGraphics(void) {
 // Takes full 8 bit values.
 void I_SetPalette (byte* palette) {
 	for(Uint16 i = 0, j = 0; i < 256; i++, j += 3) {
-		screen_pal[i].r = palette[j];
-		screen_pal[i].g = palette[j + 1];
-		screen_pal[i].b = palette[j + 2];
+		sdl_pal_colors[i].r = palette[j];
+		sdl_pal_colors[i].g = palette[j + 1];
+		sdl_pal_colors[i].b = palette[j + 2];
 	};
 
-	SDL_SetPaletteColors(sdl_pal_sur->format->palette, screen_pal, 0, 256);
+	SDL_SetPaletteColors(sdl_pal_sur->format->palette, sdl_pal_colors, 0, 256);
 };
 
 void I_UpdateNoBlit(void) {
@@ -101,11 +106,32 @@ void I_UpdateNoBlit(void) {
 };
 
 void I_FinishUpdate(void) {
+	SDL_LockSurface(sdl_sur);
 	SDL_LockSurface(sdl_pal_sur);
+
 	memcpy(sdl_pal_sur->pixels, screens[0], SCREENWIDTH * SCREENHEIGHT);
+
+	Uint8 *src_pix = (Uint8 *)sdl_pal_sur->pixels;
+	Uint32 *dst_pix = (Uint32 *)sdl_sur->pixels;
+	SDL_Color sdl_color;
+
+	for(Uint32 y = 0, yw = 0; y < WIN_HEIGHT; y++, yw += WIN_WIDTH) {
+		Uint32 src_y = ((y >> WIN_SHIFT_FACTOR) * SCREENWIDTH);
+
+		for(Uint32 x = 0; x < WIN_WIDTH; x++) {
+			Uint32 src_x = (x >> WIN_SHIFT_FACTOR);
+
+			sdl_color = sdl_pal_colors[screens[0][src_y + src_x]];
+			dst_pix[yw + x] =	((0xff << 24) |
+								(sdl_color.r << 16) |
+								(sdl_color.g << 8) |
+								sdl_color.b);
+		};
+	};
+
+	SDL_UnlockSurface(sdl_sur);
 	SDL_UnlockSurface(sdl_pal_sur);
 
-	SDL_BlitSurface(sdl_pal_sur, NULL, sdl_sur, NULL);
 	SDL_UpdateWindowSurface(sdl_win);
 };
 
