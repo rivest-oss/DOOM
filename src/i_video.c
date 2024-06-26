@@ -189,8 +189,14 @@ int get_sdl_keycode(SDL_Event *sdl_ev) {
 		default: {
 			if((sdl_ev->key.keysym.scancode >= 4) & (sdl_ev->key.keysym.scancode <= 29)) {
 				code = sdl_ev->key.keysym.scancode + 0x5d;
-			} else if(sdl_ev->key.keysym.scancode == 44) {
+			}
+
+			if(sdl_ev->key.keysym.scancode == 44) {
 				code = 0x20;
+			}
+
+			if((sdl_ev->key.keysym.scancode >= 30) & (sdl_ev->key.keysym.scancode <= 39)) {
+				code = sdl_ev->key.keysym.scancode + 19;
 			}
 			
 			break;
