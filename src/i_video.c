@@ -36,8 +36,6 @@
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_video.h>
 
-#include <stdio.h>
-
 const unsigned int WIN_SHIFT_FACTOR = 2;
 
 const unsigned int WIN_WIDTH = (SCREENWIDTH << WIN_SHIFT_FACTOR);
