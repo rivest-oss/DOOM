@@ -183,14 +183,12 @@ int get_sdl_keycode(SDL_Event *sdl_ev) {
 		case SDL_SCANCODE_LALT:
 		case SDL_SCANCODE_RALT:
 			code = KEY_RALT; break;
+		
+		case SDL_SCANCODE_SPACE: code = (int)' '; break;
 
 		default: {
 			if((sdl_ev->key.keysym.scancode >= 4) & (sdl_ev->key.keysym.scancode <= 29)) {
 				code = sdl_ev->key.keysym.scancode + 0x5d;
-			}
-
-			if(sdl_ev->key.keysym.scancode == 44) {
-				code = 0x20;
 			}
 
 			if((sdl_ev->key.keysym.scancode >= 30) & (sdl_ev->key.keysym.scancode <= 39)) {
