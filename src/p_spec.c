@@ -52,6 +52,7 @@ rcsid[] = "$Id: p_spec.c,v 1.6 1997/02/03 22:45:12 b1 Exp $";
 // Data.
 #include "sounds.h"
 
+#include "i_rivests.h"
 
 //
 // Animating textures and planes
@@ -1049,6 +1050,9 @@ void P_PlayerInSpecialSector (player_t* player)
 	// SECRET SECTOR
 	player->secretcount++;
 	sector->special = 0;
+
+	I_Rivests_SecretRevealed(player);
+
 	break;
 			
       case 11:
