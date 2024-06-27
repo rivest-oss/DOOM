@@ -231,8 +231,9 @@ void I_GetEvents(void) {
 			
 				doom_ev.type = ev_mouse;
 				doom_ev.data1 = (int)(m_state & 0x7);
-				doom_ev.data2 = ((sdl_mouse_x) << 2);
-				doom_ev.data3 = ((sdl_mouse_y) << 2);
+				
+				doom_ev.data2 = doom_ev.data3 = 0;
+				// [TODO] Add mouse movement.
 
 				D_PostEvent(&doom_ev);
 				break;
