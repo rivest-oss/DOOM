@@ -12,4 +12,6 @@
 
 void I_Rivests_SecretRevealed(player_t *player);
 
+void I_Rivests_Tick_OnVisualBeforeMenu(void);
+
 #endif

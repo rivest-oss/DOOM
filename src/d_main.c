@@ -77,6 +77,8 @@ static const char rcsid[] = "$Id: d_main.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
 
 #include "d_main.h"
 
+#include "i_rivests.h"
+
 //
 // D-DoomLoop()
 // Not a globally visible function,
@@ -269,6 +271,8 @@ void D_Display (void)
 
     if (gamestate == GS_LEVEL && gametic)
 	HU_Drawer ();
+
+	I_Rivests_Tick_OnVisualBeforeMenu();
     
     // clean up border stuff
     if (gamestate != oldgamestate && gamestate != GS_LEVEL)
@@ -309,7 +313,6 @@ void D_Display (void)
 	V_DrawPatchDirect(viewwindowx+(scaledviewwidth-68)/2,
 			  y,0,W_CacheLumpName ("M_PAUSE", PU_CACHE));
     }
-
 
     // menus go directly to the screen
     M_Drawer ();          // menu is drawn even on top of everything
