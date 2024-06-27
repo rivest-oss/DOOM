@@ -243,11 +243,6 @@ default_t	defaults[] =
     {"key_speed",&key_speed, KEY_RSHIFT},
 #endif
 
-#ifdef LINUX
-    {"mousedev", (intptr_t *)&mousedev, (intptr_t)"/dev/ttyS0"},
-    {"mousetype", (intptr_t *)&mousetype, (intptr_t)"microsoft"},
-#endif
-
     {"use_mouse",&usemouse, 1},
     {"mouseb_fire",&mousebfire,0},
     {"mouseb_strafe",&mousebstrafe,1},
@@ -375,7 +370,7 @@ void M_LoadDefaults (void)
 			    *defaults[i].location = parm;
 			else
 			    *defaults[i].location =
-				(int) newstring;
+				(intptr_t) newstring;
 			break;
 		    }
 	    }

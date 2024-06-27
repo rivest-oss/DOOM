@@ -139,8 +139,8 @@ void D_DoAdvanceDemo (void);
 // Events can be discarded if no responder claims them
 //
 event_t         events[MAXEVENTS];
-int             eventhead;
-int 		eventtail;
+int             eventhead = 0;
+int 		eventtail = 0;
 
 
 //
@@ -265,16 +265,16 @@ void D_Display (void)
     
     // draw the view directly
     if (gamestate == GS_LEVEL && !automapactive && gametic)
-	R_RenderPlayerView (&players[displayplayer]);
+		R_RenderPlayerView (&players[displayplayer]);
 
     if (gamestate == GS_LEVEL && gametic)
-	HU_Drawer ();
+		HU_Drawer ();
 
 	I_Rivests_Tick_OnVisualBeforeMenu();
     
     // clean up border stuff
     if (gamestate != oldgamestate && gamestate != GS_LEVEL)
-	I_SetPalette (W_CacheLumpName ("PLAYPAL",PU_CACHE));
+		I_SetPalette (W_CacheLumpName ("PLAYPAL",PU_CACHE));
 
     // see if the border needs to be initially drawn
     if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
@@ -1022,7 +1022,7 @@ void D_DoomMain (void)
 
 	// [TODO] Exit graciously.
     if(W_InitMultipleFiles (wadfiles) < 0)
-		return 1;
+		return;
     
 
     // Check for -file in shareware

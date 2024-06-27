@@ -57,12 +57,12 @@ int     Z_FreeMemory (void);
 
 typedef struct memblock_s
 {
-    int			size;	// including the header and possibly tiny fragments
-    void**		user;	// NULL if a free block
-    int			tag;	// purgelevel
-    int			id;	// should be ZONEID
-    struct memblock_s*	next;
-    struct memblock_s*	prev;
+	int			size;	// including the header and possibly tiny fragments
+	void**		user;	// NULL if a free block
+	int			tag;	// purgelevel
+	int			id;	// should be ZONEID
+	struct memblock_s*	next;
+	struct memblock_s*	prev;
 } memblock_t;
 
 //
@@ -71,9 +71,9 @@ typedef struct memblock_s
 //
 #define Z_ChangeTag(p,t) \
 { \
-      if (( (memblock_t *)( (byte *)(p) - sizeof(memblock_t)))->id!=0x1d4a11) \
-	  I_Error("Z_CT at "__FILE__":%i",__LINE__); \
-	  Z_ChangeTag2(p,t); \
+	if(((memblock_t *)((byte *)(p) - sizeof(memblock_t)))->id != 0x1d4a11) \
+		I_Error("Z_CT at "__FILE__":%i",__LINE__); \
+	Z_ChangeTag2(p,t); \
 };
 
 
