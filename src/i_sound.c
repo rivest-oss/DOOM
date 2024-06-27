@@ -21,7 +21,6 @@
 //
 //-----------------------------------------------------------------------------
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 
@@ -40,7 +39,12 @@
 #include <SDL2/SDL.h>
 
 void I_InitSound(void) {
-	// [TODO]
+	if(SDL_Init(SDL_INIT_AUDIO) < 0) {
+		I_Error("Couldn't initialize audio video: %s", SDL_GetError());
+		return;
+	}
+
+	printf("[Rivest's DOOM Sound] I_InitSound() called.\n");
 };
 
 void I_ShutdownSound(void) {
