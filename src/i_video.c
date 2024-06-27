@@ -119,7 +119,7 @@ void I_FinishUpdate(void) {
 		for(Uint32 x = 0; x < WIN_WIDTH; x++) {
 			Uint32 src_x = (x >> WIN_SHIFT_FACTOR);
 
-			sdl_color = sdl_pal_colors[screens[0][src_y + src_x]];
+			sdl_color = sdl_pal_colors[src_pix[src_y + src_x]];
 			dst_pix[yw + x] =	((0xff << 24) |
 								(sdl_color.r << 16) |
 								(sdl_color.g << 8) |
