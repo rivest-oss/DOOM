@@ -224,32 +224,15 @@ void I_GetEvents(void) {
 				break;
 			};
 
-			case SDL_MOUSEBUTTONDOWN: {
-				doom_ev.type = ev_mouse;
-				doom_ev.data1 = (sdl_ev.button.button == SDL_BUTTON_LEFT);
-				// [TODO] Improve this ^
-				doom_ev.data2 = doom_ev.data3 = 0;
-				D_PostEvent(&doom_ev);
-				break;
-			};
-
-			case SDL_MOUSEBUTTONUP: {
-				doom_ev.type = ev_mouse;
-				doom_ev.data1 = (sdl_ev.button.button != SDL_BUTTON_LEFT);
-				// [TODO] Improve this ^
-				doom_ev.data2 = doom_ev.data3 = 0;
-				D_PostEvent(&doom_ev);
-				break;
-			};
-
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
 			case SDL_MOUSEMOTION: {
 				Uint32 m_state = SDL_GetRelativeMouseState(&sdl_mouse_x, &sdl_mouse_y);
 			
 				doom_ev.type = ev_mouse;
-				doom_ev.data1 = 0;
+				doom_ev.data1 = (int)(m_state & 0x7);
 				doom_ev.data2 = ((sdl_mouse_x) << 2);
 				doom_ev.data3 = ((sdl_mouse_y) << 2);
-				// [TODO] Improve this ^
 
 				D_PostEvent(&doom_ev);
 				break;
