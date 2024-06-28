@@ -20,7 +20,7 @@ int r_secret_text_tick = -1;
 
 void I_Rivests_SecretRevealed(player_t *player) {
 	r_secret_text = "A secret is revealed!";
-	r_secret_text_tick = 128;
+	r_secret_text_tick = ((TICRATE << 1) + TICRATE);
 
 	// [TODO] Play sound...
 };
