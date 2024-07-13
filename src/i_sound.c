@@ -22,6 +22,7 @@
 //-----------------------------------------------------------------------------
 
 #include <SDL2/SDL_audio.h>
+#include <SDL2/SDL_stdinc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -55,7 +56,18 @@ typedef struct {
 	boolean	playing;
 } rsd_snd_s;
 
+// Sounds array.
 rsd_snd_s *rsd_snds_arr = NULL;
+
+SDL_AudioSpec rsd_snd_as_curr;
+SDL_AudioSpec rsd_snd_as_want;
+SDL_AudioDeviceID rsd_snd_devid = 0;
+
+void rsd_audio_callback(void *userdata, Uint8 *stream, int len) {
+	(void)userdata;
+	(void)stream;
+	(void)len;
+};
 
 void I_InitSound(void) {
 	rsd_snds_arr = (rsd_snd_s *)malloc(RSD_MAX_SOUNDS * sizeof(rsd_snd_s));
@@ -70,10 +82,26 @@ void I_InitSound(void) {
 		return;
 	}
 
-	printf("[Rivest's DOOM Sound] I_InitSound() called.\n");
+	SDL_zero(rsd_snd_as_want);
+	SDL_zero(rsd_snd_as_curr);
+
+	rsd_snd_as_want.freq = 48000;
+	rsd_snd_as_want.format = AUDIO_F32;
+	rsd_snd_as_want.channels = 2;
+	rsd_snd_as_want.samples = 4096;
+	rsd_snd_as_want.callback = rsd_audio_callback;
+
+	rsd_snd_devid = SDL_OpenAudioDevice(NULL, SDL_FALSE, &rsd_snd_as_want, &rsd_snd_as_curr, SDL_AUDIO_ALLOW_FORMAT_CHANGE);
+
+	SDL_PauseAudioDevice(rsd_snd_devid, SDL_FALSE);
+
+	SDL_LockAudioDevice(rsd_snd_devid);
+	SDL_UnlockAudioDevice(rsd_snd_devid);
 };
 
 void I_ShutdownSound(void) {
+	SDL_CloseAudioDevice(rsd_snd_devid);
+
 	if(rsd_snds_arr != NULL)
 		free(rsd_snds_arr);
 
@@ -142,11 +170,11 @@ int I_SoundIsPlaying(int handle) {
 };
 
 void I_UpdateSound(void) {
-	// [TODO]
+	// Empty...
 };
 
 void I_SubmitSound(void) {
-	// [TODO]
+	printf("[Rivest's DOOM Sound] I_UpdateSound() called: %u\n", rsd_snd_devid);
 };
 
 void I_UpdateSoundParams(int handle, int vol, int sep, int pitch) {
