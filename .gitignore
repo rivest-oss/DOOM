@@ -1,2 +1,6 @@
-src/out/
-src/doom.wad
+out/
+.clangd
+.clang-format
+**/*.swp
+.vscode/
+*.o
