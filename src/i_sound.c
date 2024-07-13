@@ -21,11 +21,14 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <SDL2/SDL_audio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 
 #include <math.h>
 
+#include "doomtype.h"
 #include "z_zone.h"
 
 #include "i_system.h"
@@ -33,14 +36,37 @@
 #include "m_argv.h"
 #include "m_misc.h"
 #include "w_wad.h"
+#include "i_system.h"
 
 #include "doomdef.h"
 
 #include <SDL2/SDL.h>
 
+#define RSD_MAX_SOUNDS 256
+
+typedef struct {
+	boolean	has;
+
+	int		id;
+	int		vol;
+	int		sep;
+	int		pitch;
+	int		handle;
+	boolean	playing;
+} rsd_snd_s;
+
+rsd_snd_s *rsd_snds_arr = NULL;
+
 void I_InitSound(void) {
+	rsd_snds_arr = (rsd_snd_s *)malloc(RSD_MAX_SOUNDS * sizeof(rsd_snd_s));
+	if(rsd_snds_arr == NULL) {
+		I_Error("Couldn't initialize the sounds array");
+		return;
+	}
+
 	if(SDL_Init(SDL_INIT_AUDIO) < 0) {
 		I_Error("Couldn't initialize audio video: %s", SDL_GetError());
+		free(rsd_snds_arr);
 		return;
 	}
 
@@ -48,7 +74,10 @@ void I_InitSound(void) {
 };
 
 void I_ShutdownSound(void) {
-	// [TODO]
+	if(rsd_snds_arr != NULL)
+		free(rsd_snds_arr);
+
+	SDL_CloseAudio();
 };
 
 void I_SetChannels(void) {
@@ -64,7 +93,9 @@ void I_SetMusicVolume(int volume) {
 //  for a given SFX name.
 //
 int I_GetSfxLumpNum(sfxinfo_t *sfx) {
-	// [TODO]
+	char namebuff[9];
+	sprintf(namebuff, "ds%.7s", sfx->name);
+	return W_GetNumForName(namebuff);
 };
 
 //
@@ -76,15 +107,38 @@ int I_GetSfxLumpNum(sfxinfo_t *sfx) {
 //  it is ignored.
 //
 int I_StartSound(int id, int vol, int sep, int pitch, int priority) {
-	// [TODO]
+	for(int i = 0; i < RSD_MAX_SOUNDS; i++) {
+		if(rsd_snds_arr[i].has)
+			continue;
+
+		rsd_snds_arr[i].has = true;
+		rsd_snds_arr[i].handle = (int)i;
+		rsd_snds_arr[i].id = id;
+		rsd_snds_arr[i].vol = vol;
+		rsd_snds_arr[i].sep = sep;
+		rsd_snds_arr[i].pitch = pitch;
+		rsd_snds_arr[i].playing = true;
+
+		return i;
+	};
+
+	return -1;
 };
 
 void I_StopSound(int handle) {
-	// [TODO]
+	if((handle < 0) | (handle >= RSD_MAX_SOUNDS))
+		return;
+
+	rsd_snds_arr[handle].has = false;
 };
 
 int I_SoundIsPlaying(int handle) {
-	// [TODO]
+	if((handle < 0) | (handle >= RSD_MAX_SOUNDS))
+		return false;
+	if(rsd_snds_arr[handle].has == false)
+		return false;
+	
+	return rsd_snds_arr[handle].playing;
 };
 
 void I_UpdateSound(void) {
@@ -96,7 +150,14 @@ void I_SubmitSound(void) {
 };
 
 void I_UpdateSoundParams(int handle, int vol, int sep, int pitch) {
-	// [TODO]
+	if((handle < 0) | (handle >= RSD_MAX_SOUNDS))
+		return;
+	if(rsd_snds_arr[handle].has == false)
+		return;
+
+	rsd_snds_arr[handle].vol = vol;
+	rsd_snds_arr[handle].sep = sep;
+	rsd_snds_arr[handle].pitch = pitch;
 };
 
 void I_InitMusic(void) {
