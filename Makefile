@@ -5,18 +5,16 @@ SOURCES		= $(shell find src -type f -iname "*.c")
 OBJECTS		= $(patsubst src/%.c,out/%.o,$(SOURCES))
 TARGET		= ./out/rsdoom
 
-CXX			= gcc
+CXX			= g++
 CXXFLAGS	= 
 #-Wall -Wextra -Wpedantic
 CXXFLAGS	+= -DNORMALUNIX -DLINUX
 
 LD			= $(CXX)
-LDFLAGS		= -lm
-LDFLAGS		+= `sdl2-config --cflags --libs`
+LDFLAGS		+= -lraylib
 
 CPPCHECK	= cppcheck
 CLANGXX		= clang
-VALGRIND	= valgrind
 
 ifeq ($(origin DEBUG), environment)
 	CXXFLAGS += -Og -g -DRSD_DEBUG
@@ -46,8 +44,4 @@ create_dirs:
 	@$(MKDIR) $(sort $(dir $(OBJECTS)))
 
 test:
-	$(VALGRIND) \
-		--leak-check=full \
-		--show-leak-kinds=all \
-		--track-origins=yes \
-		$(TARGET)
+	$(TARGET)

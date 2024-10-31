@@ -23,7 +23,6 @@
 
 
 
-#ifdef NORMALUNIX
 #include <ctype.h>
 #include <sys/types.h>
 #include <string.h>
@@ -33,7 +32,6 @@
 #include <sys/stat.h>
 #include <alloca.h>
 #define O_BINARY		0
-#endif
 
 #include "doomtype.h"
 #include "m_swap.h"

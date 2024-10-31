@@ -229,7 +229,6 @@ default_t	defaults[] =
     {"show_messages",&showMessages, 1},
     
 
-#ifdef NORMALUNIX
     {"key_right",&key_right, KEY_RIGHTARROW},
     {"key_left",&key_left, KEY_LEFTARROW},
     {"key_up",&key_up, KEY_UPARROW},
@@ -241,7 +240,6 @@ default_t	defaults[] =
     {"key_use",&key_use, ' '},
     {"key_strafe",&key_strafe, KEY_RALT},
     {"key_speed",&key_speed, KEY_RSHIFT},
-#endif
 
     {"use_mouse",&usemouse, 1},
     {"mouseb_fire",&mousebfire,0},
